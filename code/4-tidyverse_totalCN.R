@@ -11,7 +11,7 @@ library(tidyverse)
 
 # load files ----
 tctn_data = read.csv("data/TCTN_toledo_data.csv") # data file
-tctn_sample_key = read.csv("data/TCTN_toledo_sample_key.csv") # sample key
+tctn_sample_key = read.csv("data/Toledo_sample_key.csv") # sample key
 
 
 # explore the data ----
