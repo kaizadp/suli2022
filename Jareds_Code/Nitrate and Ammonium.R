@@ -35,6 +35,7 @@ inorg_n =
 
 transect_order = factor(inorg_n$transect, level = c('upland','transition','wte','wc'))
 
+## GRAPHS
 #screwing around w/ visualizations 
 ggplot(inorganic_nitrate, aes(NO3_mgL, no3_ug_g)) +
   geom_point()
