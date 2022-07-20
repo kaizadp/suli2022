@@ -63,5 +63,6 @@ ggplot(data = tctn_data_full,
 ##C:N Line Graph
 ggplot(data = tctn_data_full,
        aes(x = TC_perc, y = TN_perc))+
+  geom_point()+
   geom_smooth(method = "lm")
 
