@@ -33,8 +33,49 @@ ggplot(data = tctn_data_full,
 
 ggplot(data = tctn_data_full,
        aes(x = horizon, y = TC_perc))+
+  labs(x = "Horizon",
+       y = "Total Carbon (%)",
+       title = "Total Carbon Content by Horizon",
+       subtitle = "WLE, 2022")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, vjust = 0.5),
+        legend.position = "right",
+        )+
   geom_boxplot()+
   geom_jitter(width = 0.2)
+
+###combining graphs
+#piping to simplify
+tc_hz_graph = 
+  tctn_data_full %>% 
+  ggplot(aes(x = horizon, y = TC_perc))+
+  labs(x = "Horizon",
+       y = "Total Carbon (%)",
+       title = "Total Carbon Content by Horizon",
+       subtitle = "WLE, 2022")+
+  theme_classic()+
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, vjust = 0.5),
+        legend.position = "right",
+  )+
+  geom_boxplot()+
+  geom_jitter(width = 0.2)
+
+tc_transect_graph = 
+  tctn_data_full %>% 
+  ggplot(aes(x = transect, y = TC_perc))+
+  geom_boxplot()+
+  geom_jitter(width = 0.2)
+
+#have to install patchwork for combining graphs
+install.packages("patchwork")
+library(patchwork)
+
+#following syntax for patchwork
+tc_transect_graph + tc_hz_graph
+#use plot_layout(guides = "collect) to combine legends and add on to place it like...
+#(tc_transect_graph + tc_hz_graph & theme (legnend.position = "top"))
 
 #smoothed point plots
 ggplot(data = tctn_data_full,
@@ -66,3 +107,5 @@ ggplot(data = tctn_data_full,
   geom_point()+
   geom_smooth(method = "lm")
 
+###to save at the end use ggsave
+# ggsave()
