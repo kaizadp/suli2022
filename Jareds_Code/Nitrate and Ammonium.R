@@ -47,11 +47,12 @@ ggplot(inorg_n, aes(transect_order,no3_ug_g)) +
   geom_boxplot()
 
 ggplot(inorg_n, aes(transect_order,no3_ug_g)) +
-  geom_boxplot(outlier.alpha = 0)+ 
+  geom_boxplot(outlier.alpha = 0) + 
   geom_jitter(width = .2,aes(color = site))
 
 ggplot(inorg_n, aes(horizon,no3_ug_g)) +
   geom_jitter(width = 0.2)
 
 ggplot(inorg_n, aes(site,no3_ug_g)) +
-  geom_jitter(width = 0.2)
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter(aes(color = site), width = 0.2)

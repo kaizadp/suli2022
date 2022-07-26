@@ -7,57 +7,86 @@ library(tidyverse)
 
 #--------------------------------------------------#
 
-##LOAD FILES - processed at PNNL
+##LOAD AND MERGE FILES - processed at PNNL
 
 # data file
-wsoc = read.csv("data/cmps_data/weoc.csv")
+wsoc_data = read.csv("data/cmps_data/weoc_2022-07-23.csv")
 # sample key
 sample_key = read.csv("data/cmps_data/sample_key.csv") 
-# check loaded files 
-View(wsoc)
-View(sample_key)
-
-##REMOVE VACUUM FILTERED SAMPLES
-
-wsoc = 
-  wsoc %>% 
-  filter(notes != "vacuum-filtered") %>%
-  arrange(sample_label)
-# check filtered files 
-View(wsoc)
-
-##MERGE DATA AND SAMPLE KEY
-
-wsoc = 
-  wsoc %>% 
+# merge data and sample key
+wsoc_merge = 
+  wsoc_data %>% 
   left_join(sample_key, by = "sample_label")
-#check merged file
-View(wsoc)
 
-##FILTER ANY OUTLIERS
+## Processed Data
+
+wsoc_processed = 
+  wsoc_merge %>% 
+# remove inconsistent filtration method 
+  filter(notes != "vacuum-filtered") %>%
+  ###right_join(sample_key, by = "sample_label")
+# remove outliers 
+  filter((region == "WLE" & npoc_ug_g < 200)|
+  (region == "CB" & npoc_ug_g < 1250)) %>% 
+# remove wte transects
+  filter(transect != "wte") %>% 
+# filter N/A
+  ###filter(!is.na(tree_number)) %>% 
+# arrange by sample label 
+  arrange(sample_label) 
+  
+
+## Formatting
+transect_order = factor(wsoc_processed$transect, level = c('upland','transition','wc'))
+
+## Regional Data
+  
+wsoc_wle = 
+  wsoc_processed %>% 
+  filter(region == "WLE")
+
+wsoc_cb =
+  wsoc_processed %>% 
+  filter(region == "CB")
 
 
 
 ## GRAPHS
-transect_order = factor(wsoc$transect, level = c('upland','transition','wte','wc'))
-#screwing around w/ visualizations 
-ggplot(wsoc, aes(npoc_ug_g,npoc_mgL)) +
-  geom_point()
 
-ggplot(wsoc, aes(transect,npoc_mgL)) +
+ggplot(wsoc_processed, aes(npoc_ug_g,npoc_mgL)) +
+  geom_point(aes(color = region, shape = transect))
+
+## Transect Analysis 
+ggplot(wsoc_cb, aes(transect, npoc_ug_g)) +
+  geom_violin() + 
   geom_jitter(width = .2,aes(color = site))
 
-ggplot(wsoc, aes(transect_order,npoc_mgL)) +
-  geom_boxplot()
+ggplot(wsoc_wle, aes(transect, npoc_ug_g)) +
+  geom_violin() + 
+  geom_jitter(width = .2,aes(color = site))
 
-ggplot(wsoc, aes(transect_order,npoc_mgL)) +
+ggplot(wsoc_processed, aes(transect_order,npoc_ug_g)) +
   geom_boxplot(outlier.alpha = 0)+ 
-  geom_jitter(width = .2,aes(color = site))
+  geom_jitter(width = .2,aes(color = region))+
+  facet_wrap(~region)
 
-ggplot(wsoc, aes(horizon,npoc_mgL)) +
-  geom_jitter(width = 0.2)
+## Horizon Analysis
+ggplot(wsoc_processed, aes(horizon,npoc_ug_g)) +
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter(width = 0.2,aes(color = region))
 
-ggplot(wsoc, aes(site,npoc_mgL)) +
-  geom_jitter(width = 0.2)
+ggplot(wsoc_cb, aes(horizon,npoc_ug_g)) +
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter(width = 0.2,aes(color = horizon)) 
+
+ggplot(wsoc_wle, aes(horizon,npoc_ug_g)) +
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter(width = 0.2,aes(color = horizon)) 
+
+## Site Analysis 
+ggplot(wsoc_processed, aes(site,npoc_ug_g))+
+  geom_boxplot(outlier.alpha = 0) +
+  geom_jitter(aes(color = site), width = 0.2)
+
 
 
