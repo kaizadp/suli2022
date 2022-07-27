@@ -10,7 +10,7 @@ tctn_key = read.csv("data/cmps_data/sample_key.csv")
 
 #bringing in color palettes
 install.packages("devtools")
-install_github("kaizadp/soilpalettes")
+devtools::install_github("kaizadp/soilpalettes")
 
 #starting with making datasheet for analysis by transect and horizon
 #copied from Kaizad and adjusted for these data
@@ -129,13 +129,17 @@ wrc_data = read.csv("data/cmps_data/wrc_2022-07-18.csv")
 wrc_data_pretty = 
   wrc_data %>% 
   mutate(site = recode(site, "OWC" = 'Old Woman Creek'),
-         site = recode(site, "PR" = "Portage River"))
+         site = recode(site, "PR" = "Portage River"),
+         transect = recode(transect, "transition" = "Transition"),
+         transect = recode(transect, "upland" = "Upland"),
+         transect = recode(transect, "wetland" = "Wetland"),
+         transect = factor(transect, levels = c("Upland","Transition","Wetland")))
 
 #straight up stealing from Kaizad
-options(scipen = 99)
+options(scipen = 9)
 
 wrc_graph = 
-  wrc_data %>% 
+  wrc_data_pretty %>% 
   filter(EC_kit != "K008") %>% 
   filter(EC_kit == c("K004", "K011")) %>% 
   ggplot(aes(x = kPa/1000, y = vol_water_perc, colour = transect))+
