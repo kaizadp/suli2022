@@ -26,25 +26,25 @@ tctn_data_full =
          transect = factor(transect, levels = c("upland","transition","wetland"))) 
 
 #boxplot bc why not
-ggplot(data = tctn_data_full,
-       aes(x = transect, y = TC_perc))+
-  geom_boxplot()+
-  geom_jitter(width = 0.2)
+#this is now scratchwork
+#ggplot(data = tctn_data_full,
+       #aes(x = transect, y = TC_perc))+
+  #geom_boxplot()+
+  #geom_jitter(width = 0.2)
 
-ggplot(data = tctn_data_full,
-       aes(x = horizon, y = TC_perc))+
-  labs(x = "Horizon",
-       y = "Total Carbon (%)",
-       title = "Total Carbon by Horizon",
-       subtitle = "WLE, 2022")+
-  facet_wrap(~region, scales = "free_x")+
-  theme_classic()+
-  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, vjust = 0.5),
-        legend.position = "right",
-  )+
-  geom_boxplot()+
-  geom_jitter(width = 0.2)
+#ggplot(data = tctn_data_full,
+       #aes(x = horizon, y = TC_perc))+
+  #labs(x = "Horizon",
+       #y = "Total Carbon (%)",
+       #title = "Total Carbon by Horizon",
+       #subtitle = "WLE, 2022")+
+  #facet_wrap(~region, scales = "free_x")+
+  #theme_classic()+
+  #theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
+        #plot.subtitle = element_text(hjust = 0.5, vjust = 0.5),
+        #legend.position = "right",)+
+  #geom_boxplot()+
+  #geom_jitter(width = 0.2)
 
 ###combining graphs
 #piping to simplify
@@ -77,11 +77,11 @@ tc_transect_graph =
   geom_jitter(width = 0.2)
 
 #have to install patchwork for combining graphs
-install.packages("patchwork")
-library(patchwork)
+#install.packages("patchwork")
+#library(patchwork)
 
 #following syntax for patchwork
-tc_transect_graph + tc_hz_graph
+#tc_transect_graph + tc_hz_graph
 #use plot_layout(guides = "collect) to combine legends and add on to place it like...
 #(tc_transect_graph + tc_hz_graph & theme (legnend.position = "top"))
 
@@ -152,7 +152,9 @@ wrc_graph =
   labs(x = "Water Tension (MPa)",
        y = "Water Content (%)",
        title = "Water Retention Curves of Lake Erie Sites",
-       color = "")
+       color = "")+
+  scale_color_manual(values = soil_palette("durorthod"))
+
 
 
 
@@ -176,3 +178,4 @@ ggsave("graphs/Total Carbon by Horizon.png",
        dpi = 300,
        width = 6,
        height = 4)
+
