@@ -5,6 +5,7 @@ library(tidyverse)
 library(ggplot2)
 
 #bringing in color palettes
+#!!!this is giving me some trouble
 install.packages("devtools")
 devtools::install_github("kaizadp/soilpalettes")
 
@@ -63,7 +64,7 @@ tc_transect_graph =
 
 ###Graph: C:N Line
 cn_line_graph =
-  tctn_data_full %>% 
+  tctn_data_pretty %>% 
 ggplot(aes(x = TC_perc, y = TN_perc))+
   labs(x = "Total Carbon (%)",
        y = "Total Nitrogen (%)",
@@ -92,7 +93,7 @@ wrc_graph =
        y = "Water Content (%)",
        title = "Water Retention Curves of Lake Erie Sites",
        color = "")+
-  scale_color_manual(values = soil_palette("durorthod"))
+  scale_fill_manual(values = soil_palette("paleustalf",3))
 
 
 ###to save at the end use ggsave
