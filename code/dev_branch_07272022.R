@@ -22,7 +22,9 @@ tctn_data_pretty =
   filter(transect != "wte") %>% 
   mutate(transect = recode(transect, "wc" = 'wetland'), 
          horizon = factor(horizon, levels = c("O","A","B")),
-         transect = factor(transect, levels = c("upland","transition","wetland"))) 
+         transect = factor(transect, levels = c("upland","transition","wetland")),
+         region = recode(region, "CB" = "Chesapeake Bay"),
+         region = recode(region, "WLE" = "Western Lake Erie")) 
 
 wrc_data_pretty = 
   wrc_data %>% 
@@ -39,14 +41,22 @@ tc_hz_graph =
   ggplot(aes(x = horizon, y = TC_perc))+
   labs(x = "Horizon",
        y = "Total Carbon (%)",
-       title = "Total Carbon by Horizon")+
+       title = "Total Carbon by Horizon",
+       color = "")+
   facet_wrap(~region, scales = "free_x")+
   theme_classic()+
-  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, vjust = 0.5),
-        legend.position = "right")+
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5, color = '#402d10', face = 'bold', size = 20),
+        text = element_text(color = "#402d10"),
+        strip.text = element_text(color = "#402d10", size = 14, face = "italic"),
+        strip.background = element_rect(fill = "#dbcebd"),
+        axis.title = element_text(color = "#402d10", size = 16),
+        axis.text = element_text(color = "#402d10"),
+        legend.position = "none",
+        panel.background = element_rect(fill = "#faf8f5", color = "#402d10"),
+        plot.background = element_rect(fill = "#ede8e1"))+
   geom_boxplot()+
-  geom_jitter(width = 0.2)
+  geom_jitter(aes(color = horizon),width = 0.3)+
+  scale_color_manual(values = c("#DC267F","#FE6100","#FFC900"))
 
 ###Graph: Total Carbon by Transect
 tc_transect_graph = 
@@ -57,10 +67,18 @@ tc_transect_graph =
        title = "Total Carbon by Transect")+
   facet_wrap(~region, scales = "free_x")+
   theme_classic()+
-  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
-        legend.position = "right")+
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5, color = '#402d10', face = 'bold', size = 20),
+        text = element_text(color = "#402d10"),
+        strip.text = element_text(color = "#402d10", size = 14, face = "italic"),
+        strip.background = element_rect(fill = "#dbcebd"),
+        axis.title = element_text(color = "#402d10", size = 16),
+        axis.text = element_text(color = "#402d10"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "#faf8f5", color = "#402d10"),
+        plot.background = element_rect(fill = "#ede8e1"))+
   geom_boxplot()+
-  geom_jitter(width = 0.2)
+  geom_jitter(width = 0.2,aes(color = horizon))+
+  scale_color_manual(values = c("#DC267F","#FE6100","#FFC900"))
 
 ###Graph: C:N Line
 cn_line_graph =
@@ -68,12 +86,22 @@ cn_line_graph =
 ggplot(aes(x = TC_perc, y = TN_perc))+
   labs(x = "Total Carbon (%)",
        y = "Total Nitrogen (%)",
-       title = "C:N Across the TAIs")+
+       title = "C:N Across the TAIs",
+       color = "")+
   theme_classic()+
-  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
-        legend.position = "right")+
-  geom_point()+
-  geom_smooth(method = "lm")
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5, color = '#402d10', face = 'bold', size = 20),
+        text = element_text(color = "#402d10"),
+        strip.text = element_text(color = "#402d10", size = 14, face = "italic"),
+        strip.background = element_rect(fill = "#dbcebd"),
+        axis.title = element_text(color = "#402d10", size = 16),
+        axis.text = element_text(color = "#402d10"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "#faf8f5", color = "#402d10"),
+        plot.background = element_rect(fill = "#ede8e1"))+
+  geom_point(aes(color = region))+
+  geom_smooth(method = "lm")+
+  scale_color_manual(values = c("#E66100", "#5D3A9B"))
+ 
 
 ###Graph: Water Retention Curves of Lake Erie
 options(scipen = 9)
@@ -83,36 +111,53 @@ wrc_graph =
   filter(EC_kit != "K008") %>% 
   filter(EC_kit == c("K004", "K011")) %>% 
   ggplot(aes(x = kPa/1000, y = vol_water_perc, colour = transect))+
-  geom_line()+
+  geom_line(size = 1.5)+
   scale_x_log10()+
   facet_wrap(~site)+
   theme_classic()+
-  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5),
-        legend.position = "right")+
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5, color = '#402d10', face = 'bold', size = 20),
+        text = element_text(color = "#402d10"),
+        strip.text = element_text(color = "#402d10", size = 14, face = "italic"),
+        strip.background = element_rect(fill = "#dbcebd"),
+        axis.title = element_text(color = "#402d10", size = 16),
+        axis.text = element_text(color = "#402d10"),
+        legend.position = "top",
+        panel.background = element_rect(fill = "#faf8f5", color = "#402d10"),
+        plot.background = element_rect(fill = "#ede8e1"))+
   labs(x = "Water Tension (MPa)",
        y = "Water Content (%)",
        title = "Water Retention Curves of Lake Erie Sites",
        color = "")+
-  scale_fill_manual(values = soil_palette("paleustalf",3))
+  scale_color_manual(values = c("#004D40","#FFC107","#1E88E5"))
+  
 
+  #soil_palette("redox",3)
+#scale_color_manual(values = soil_palette("redox2",3))
+  #scale_color_manual(values = c("darkolivegreen","coral4","deepskyblue4"))
 
 ###to save at the end use ggsave
 # ggsave()
 
-ggsave("graphs/Total CN Line Graph.png",
+ggsave("graphs/Total CN Line Graph Final.png",
        cn_line_graph,
        dpi = 300,
        width = 6,
        height = 4)
 
-ggsave("graphs/Total Carbon by Transect.png",
+ggsave("graphs/Total Carbon by Transect Final.png",
        tc_transect_graph,
        dpi = 300,
        width = 6,
        height = 4)
 
-ggsave("graphs/Total Carbon by Horizon.png",
+ggsave("graphs/Total Carbon by Horizon Final.png",
        tc_hz_graph,
+       dpi = 300,
+       width = 6,
+       height = 4)
+
+ggsave("graphs/Water Retention Curves Final.png",
+       wrc_graph,
        dpi = 300,
        width = 6,
        height = 4)
