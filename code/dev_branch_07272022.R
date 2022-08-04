@@ -4,15 +4,12 @@
 library(tidyverse)
 library(ggplot2)
 
-#bringing in color palettes
-#!!!this is giving me some trouble
-install.packages("devtools")
-devtools::install_github("kaizadp/soilpalettes")
-
 #load files (name you want = read.csv(pathway))
 tctn_data = read.csv("data/cmps_data/total_CNS_partial_2022-07-24.csv")
 tctn_key = read.csv("data/cmps_data/sample_key.csv")
 wrc_data = read.csv("data/cmps_data/wrc_2022-07-18.csv")
+pH_data = read.csv("data/cmps_data/pH_sp_cond.csv")
+sample_key = read.csv("data/cmps_data/sample_key.csv")
 
 #making the data pretty
 tctn_data_pretty = 
@@ -34,6 +31,19 @@ wrc_data_pretty =
          transect = recode(transect, "upland" = "Upland"),
          transect = recode(transect, "wetland" = "Wetland"),
          transect = factor(transect, levels = c("Upland","Transition","Wetland")))
+
+pH_data_pretty = 
+  pH_data %>% 
+  left_join(sample_key, by = "sample_label")
+
+###Graph: pH by region
+pH_region_graph =
+  pH_data_pretty %>% 
+  ggplot(aes(x = transect, y = pH))+
+  facet_wrap(~region)+
+  geom_jitter(aes(color = horizon), 
+              width = 0.2)
+
 
 ###Graph: Total Carbon by Horizon
 tc_hz_graph = 
@@ -217,3 +227,8 @@ ggsave("graphs/Water Retention Curves Final.png",
 
 #####will make duplicates of each of these with CB data when available
 #####will also make a boxplot comparing range of TCC between WLE and CB
+
+#bringing in color palettes
+#!!!this is giving me some trouble
+#install.packages("devtools")
+#devtools::install_github("kaizadp/soilpalettes")
