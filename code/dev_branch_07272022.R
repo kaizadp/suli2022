@@ -1,14 +1,14 @@
-### Creating TCTN Graphs of CB and WLE 7.26.22
+### Deliverables Graphs and Stuff
 
 #load packages
 library(tidyverse)
-library(ggplot2)
+#library(ggplot2)
 
 #load files (name you want = read.csv(pathway))
 tctn_data = read.csv("data/cmps_data/total_CNS_partial_2022-07-24.csv")
 tctn_key = read.csv("data/cmps_data/sample_key.csv")
 wrc_data = read.csv("data/cmps_data/wrc_2022-07-18.csv")
-pH_data = read.csv("data/cmps_data/pH_sp_cond.csv")
+pH_data = read.csv("data/cmps_data/soil_pH_toledo_chesapeake_data.csv")
 sample_key = read.csv("data/cmps_data/sample_key.csv")
 
 #making the data pretty
@@ -34,15 +34,38 @@ wrc_data_pretty =
 
 pH_data_pretty = 
   pH_data %>% 
-  left_join(sample_key, by = "sample_label")
+  left_join(sample_key, by = "sample_label") %>% 
+  mutate(transect = recode(transect, "transition" = "Transition"),
+         transect = recode(transect, "upland" = "Upland"),
+         transect = recode(transect, "wc" = "Wetland"),
+         transect = factor(transect, levels = c("Upland","Transition","Wetland")),
+         region = recode(region, "CB" = "Chesapeake Bay"),
+         region = recode(region, "WLE" = "Western Lake Erie"),
+         horizon = factor(horizon, levels = c("O","A","B"))) %>% 
+  filter(!is.na(transect))
 
 ###Graph: pH by region
+set.seed(12345)
 pH_region_graph =
   pH_data_pretty %>% 
   ggplot(aes(x = transect, y = pH))+
+  labs(title = "pH by Region",
+       x = "")+
   facet_wrap(~region)+
+  theme_classic()+
+  theme(plot.title = element_text(hjust = 0.5, vjust = 0.5, color = '#402d10', face = 'bold', size = 20),
+        text = element_text(color = "#402d10"),
+        strip.text = element_text(color = "#402d10", size = 14, face = "italic"),
+        strip.background = element_rect(fill = "#dbcebd"),
+        axis.title = element_text(color = "#402d10", size = 16),
+        axis.text = element_text(color = "#402d10"),
+        legend.position = "top",
+        legend.title = element_blank(),
+        panel.background = element_rect(fill = "#faf8f5", color = "#402d10"),
+        plot.background = element_rect(fill = "#ede8e1"))+
   geom_jitter(aes(color = horizon), 
-              width = 0.2)
+              width = 0.2)+
+  scale_color_manual(values = c("#DC267F","#FE6100","#FFC900"))
 
 
 ###Graph: Total Carbon by Horizon
@@ -111,7 +134,6 @@ ggplot(aes(x = TC_perc, y = TN_perc))+
   geom_point(aes(color = region))+
   geom_smooth(method = "lm")+
   scale_color_manual(values = c("#E66100", "#5D3A9B"))
- 
 
 ###Graph: Water Retention Curves of Lake Erie
 options(scipen = 9)
@@ -168,6 +190,12 @@ ggsave("graphs/Total Carbon by Horizon Final.png",
 
 ggsave("graphs/Water Retention Curves Final.png",
        wrc_graph,
+       dpi = 300,
+       width = 6,
+       height = 4)
+
+ggsave("graphs/pH by Region Final.png",
+       pH_region_graph,
        dpi = 300,
        width = 6,
        height = 4)
